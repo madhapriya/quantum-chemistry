@@ -47,7 +47,7 @@ const Index = () => {
   const handleStartSimulation = () => {
     if (selectedMolecule) {
       // Navigate to simulation with selected molecule
-      window.location.href = '/simulation';
+      window.location.href = `/simulation/${selectedMolecule}`;
     }
   };
 
