@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { Atom, FlaskConical, Zap, BarChart3, Eye, ArrowRight, Sparkles } from "lucide-react";
+import { Atom, FlaskConical, Zap, BarChart3, Eye, ArrowRight, Sparkles, Play, Settings, Database, Cpu, TrendingUp, CheckCircle } from "lucide-react";
 
 const molecules = [
   {
@@ -41,12 +41,75 @@ const molecules = [
 
 const Index = () => {
   const [selectedMolecule, setSelectedMolecule] = useState<string>('');
+  const [workflowRunning, setWorkflowRunning] = useState(false);
+  const [currentStep, setCurrentStep] = useState(0);
 
   const handleStartSimulation = () => {
     if (selectedMolecule) {
       // Navigate to simulation with selected molecule
       window.location.href = '/simulation';
     }
+  };
+
+  const workflowSteps = [
+    { 
+      id: 1, 
+      title: "Molecule Selection", 
+      description: "User selects H₂, LiH, or H₂O molecule", 
+      icon: Atom,
+      duration: 1000 
+    },
+    { 
+      id: 2, 
+      title: "Backend Processing", 
+      description: "Request sent to quantum chemistry server", 
+      icon: Database,
+      duration: 1500 
+    },
+    { 
+      id: 3, 
+      title: "Hamiltonian Construction", 
+      description: "Molecular Hamiltonian matrix built from geometry", 
+      icon: Settings,
+      duration: 2000 
+    },
+    { 
+      id: 4, 
+      title: "Quantum Circuit Execution", 
+      description: "VQE circuits run on IBM Quantum backend", 
+      icon: Cpu,
+      duration: 3000 
+    },
+    { 
+      id: 5, 
+      title: "Optimization Convergence", 
+      description: "Classical optimizer finds ground state energy", 
+      icon: TrendingUp,
+      duration: 2500 
+    },
+    { 
+      id: 6, 
+      title: "Results Visualization", 
+      description: "Interactive dashboard displays results instantly", 
+      icon: BarChart3,
+      duration: 1000 
+    }
+  ];
+
+  const runWorkflowDemo = async () => {
+    setWorkflowRunning(true);
+    setCurrentStep(0);
+    
+    for (let i = 0; i < workflowSteps.length; i++) {
+      setCurrentStep(i + 1);
+      await new Promise(resolve => setTimeout(resolve, workflowSteps[i].duration));
+    }
+    
+    // Reset after completion
+    setTimeout(() => {
+      setWorkflowRunning(false);
+      setCurrentStep(0);
+    }, 2000);
   };
 
   return (
@@ -253,6 +316,157 @@ const Index = () => {
                 </Button>
               </CardContent>
             </Card>
+          </div>
+        </div>
+      </section>
+
+      {/* Workflow Visualization Section */}
+      <section className="py-16 bg-gradient-to-br from-primary/5 via-secondary/5 to-accent/5">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-12">
+            <h2 className="text-4xl font-bold mb-4">End-to-End Quantum Workflow</h2>
+            <p className="text-lg text-muted-foreground max-w-3xl mx-auto mb-8">
+              Experience the complete quantum chemistry pipeline: from molecule selection to quantum 
+              circuit execution on IBM backends, ending with instant results visualization.
+            </p>
+            <Button 
+              size="lg" 
+              onClick={runWorkflowDemo}
+              disabled={workflowRunning}
+              className="quantum-glow quantum-pulse"
+            >
+              {workflowRunning ? (
+                <div className="flex items-center gap-2">
+                  <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                  Running Demo...
+                </div>
+              ) : (
+                <div className="flex items-center gap-2">
+                  <Play className="h-5 w-5" />
+                  Watch Full Workflow Demo
+                </div>
+              )}
+            </Button>
+          </div>
+
+          <div className="max-w-6xl mx-auto">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {workflowSteps.map((step, index) => {
+                const IconComponent = step.icon;
+                const isActive = workflowRunning && currentStep === step.id;
+                const isCompleted = workflowRunning && currentStep > step.id;
+                const isUpcoming = workflowRunning && currentStep < step.id;
+                
+                return (
+                  <Card 
+                    key={step.id}
+                    className={`relative transition-all duration-500 ${
+                      isActive 
+                        ? 'ring-2 ring-primary quantum-glow scale-105 bg-primary/5' 
+                        : isCompleted 
+                        ? 'bg-secondary/5 border-secondary/50' 
+                        : isUpcoming 
+                        ? 'opacity-50 scale-95' 
+                        : 'hover:shadow-lg'
+                    }`}
+                  >
+                    <CardHeader>
+                      <div className="flex items-center gap-3">
+                        <div className={`w-12 h-12 rounded-xl flex items-center justify-center transition-all duration-300 ${
+                          isActive 
+                            ? 'bg-primary text-primary-foreground animate-pulse' 
+                            : isCompleted 
+                            ? 'bg-secondary text-secondary-foreground' 
+                            : 'bg-muted'
+                        }`}>
+                          {isCompleted ? (
+                            <CheckCircle className="h-6 w-6" />
+                          ) : (
+                            <IconComponent className="h-6 w-6" />
+                          )}
+                        </div>
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2">
+                            <span className={`text-xs font-bold px-2 py-1 rounded-full ${
+                              isActive 
+                                ? 'bg-primary text-primary-foreground' 
+                                : isCompleted 
+                                ? 'bg-secondary text-secondary-foreground' 
+                                : 'bg-muted text-muted-foreground'
+                            }`}>
+                              Step {step.id}
+                            </span>
+                          </div>
+                          <CardTitle className="text-lg mt-1">{step.title}</CardTitle>
+                        </div>
+                      </div>
+                    </CardHeader>
+                    <CardContent>
+                      <p className="text-sm text-muted-foreground">
+                        {step.description}
+                      </p>
+                      
+                      {/* Progress indicator for active step */}
+                      {isActive && (
+                        <div className="mt-4 space-y-2">
+                          <div className="flex justify-between text-xs">
+                            <span>Processing...</span>
+                            <span className="text-primary">Running</span>
+                          </div>
+                          <div className="w-full bg-muted rounded-full h-1.5">
+                            <div className="bg-primary h-1.5 rounded-full animate-pulse w-full"></div>
+                          </div>
+                        </div>
+                      )}
+                      
+                      {/* Completion indicator */}
+                      {isCompleted && (
+                        <div className="mt-4 flex items-center gap-2 text-xs text-secondary">
+                          <CheckCircle className="h-3 w-3" />
+                          <span>Completed</span>
+                        </div>
+                      )}
+                    </CardContent>
+
+                    {/* Connection arrows */}
+                    {index < workflowSteps.length - 1 && (
+                      <div className="hidden lg:block absolute top-1/2 -right-3 transform -translate-y-1/2 z-10">
+                        <ArrowRight className={`h-6 w-6 ${
+                          isCompleted ? 'text-secondary' : 'text-muted-foreground'
+                        }`} />
+                      </div>
+                    )}
+                  </Card>
+                );
+              })}
+            </div>
+
+            {/* Workflow Summary */}
+            <div className="mt-12 text-center">
+              <Card className="max-w-2xl mx-auto bg-card/50 backdrop-blur-sm">
+                <CardContent className="p-6">
+                  <h3 className="text-xl font-bold mb-4">Complete Quantum Chemistry Pipeline</h3>
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                    <div>
+                      <div className="text-2xl font-bold text-primary">~15s</div>
+                      <div className="text-muted-foreground">Total Runtime</div>
+                    </div>
+                    <div>
+                      <div className="text-2xl font-bold text-secondary">IBM</div>
+                      <div className="text-muted-foreground">Quantum Backend</div>
+                    </div>
+                    <div>
+                      <div className="text-2xl font-bold text-accent">VQE</div>
+                      <div className="text-muted-foreground">Algorithm</div>
+                    </div>
+                    <div>
+                      <div className="text-2xl font-bold text-primary">Real-time</div>
+                      <div className="text-muted-foreground">Visualization</div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
           </div>
         </div>
       </section>
