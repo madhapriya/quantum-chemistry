@@ -1,23 +1,41 @@
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { OrbitControls, Text, Sphere, Line } from "@react-three/drei";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowLeft, Play, Pause, RotateCcw } from "lucide-react";
+import { ArrowLeft, Play, Pause, RotateCcw, Download } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 import * as THREE from "three";
+import { 
+  QuantumState, 
+  BlochCoordinates, 
+  initialQuantumState, 
+  quantumGates, 
+  stateToBloch, 
+  calculateProbabilities, 
+  measureQubit, 
+  formatComplex,
+  generateQuantumReport,
+  downloadReport
+} from "@/lib/quantumState";
 
 // Bloch Sphere Component
-const BlochSphere = ({ isAnimating }: { isAnimating: boolean }) => {
+const BlochSphere = ({ 
+  isAnimating, 
+  blochCoords 
+}: { 
+  isAnimating: boolean; 
+  blochCoords: BlochCoordinates; 
+}) => {
   const meshRef = useRef<THREE.Mesh>(null);
   const vectorRef = useRef<THREE.Group>(null);
   
   useFrame((state) => {
     if (isAnimating && vectorRef.current) {
       const time = state.clock.getElapsedTime();
-      // Animate the quantum state vector
-      vectorRef.current.rotation.y = time * 0.5;
-      vectorRef.current.rotation.x = Math.sin(time) * 0.3;
+      // Gentle rotation animation when enabled
+      vectorRef.current.rotation.y += 0.01;
     }
   });
 
@@ -61,11 +79,11 @@ const BlochSphere = ({ isAnimating }: { isAnimating: boolean }) => {
       {/* Quantum state vector */}
       <group ref={vectorRef}>
         <Line
-          points={[[0, 0, 0], [0, 0.8, 0.6]]}
+          points={[[0, 0, 0], [blochCoords.x, blochCoords.z, blochCoords.y]]}
           color="hsl(263, 85%, 58%)"
           lineWidth={4}
         />
-        <Sphere args={[0.05]} position={[0, 0.8, 0.6]}>
+        <Sphere args={[0.05]} position={[blochCoords.x, blochCoords.z, blochCoords.y]}>
           <meshBasicMaterial color="hsl(263, 85%, 58%)" />
         </Sphere>
       </group>
@@ -117,6 +135,50 @@ const QuantumStateVisualizer = () => {
 const Visualization = () => {
   const [isAnimating, setIsAnimating] = useState(true);
   const [currentView, setCurrentView] = useState<'bloch' | 'states'>('bloch');
+  const [quantumState, setQuantumState] = useState<QuantumState>(initialQuantumState);
+  const [lastMeasurement, setLastMeasurement] = useState<'0' | '1'>('0');
+  const [measurements, setMeasurements] = useState<string[]>([]);
+  const { toast } = useToast();
+
+  const blochCoords = stateToBloch(quantumState);
+  const probabilities = calculateProbabilities(quantumState);
+
+  const applyGate = (gateName: string, gateFunction: (state: QuantumState) => QuantumState) => {
+    setQuantumState(gateFunction(quantumState));
+    toast({
+      title: "Quantum Gate Applied",
+      description: `${gateName} gate applied to qubit`,
+    });
+  };
+
+  const performMeasurement = () => {
+    const { result, newState } = measureQubit(quantumState);
+    setQuantumState(newState);
+    setLastMeasurement(result);
+    setMeasurements(prev => [...prev, `|${result}⟩ at ${new Date().toLocaleTimeString()}`]);
+    toast({
+      title: "Measurement Performed",
+      description: `Qubit collapsed to |${result}⟩ state`,
+    });
+  };
+
+  const resetState = () => {
+    setQuantumState(initialQuantumState);
+    setMeasurements([]);
+    toast({
+      title: "State Reset",
+      description: "Quantum state reset to |+⟩",
+    });
+  };
+
+  const exportData = () => {
+    const report = generateQuantumReport(quantumState, measurements);
+    downloadReport(report, `quantum-visualization-${Date.now()}.json`);
+    toast({
+      title: "Report Exported",
+      description: "Quantum state report downloaded successfully",
+    });
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -151,8 +213,11 @@ const Visualization = () => {
               >
                 {isAnimating ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
               </Button>
-              <Button variant="outline" size="sm">
+              <Button variant="outline" size="sm" onClick={resetState}>
                 <RotateCcw className="h-4 w-4" />
+              </Button>
+              <Button variant="outline" size="sm" onClick={exportData}>
+                <Download className="h-4 w-4" />
               </Button>
             </div>
           </div>
@@ -183,7 +248,7 @@ const Visualization = () => {
                     <OrbitControls enablePan={true} enableZoom={true} enableRotate={true} />
                     
                     {currentView === 'bloch' ? (
-                      <BlochSphere isAnimating={isAnimating} />
+                      <BlochSphere isAnimating={isAnimating} blochCoords={blochCoords} />
                     ) : (
                       <QuantumStateVisualizer />
                     )}
@@ -204,19 +269,19 @@ const Visualization = () => {
                 <div className="space-y-2">
                   <div className="flex justify-between items-center">
                     <span className="text-sm">|0⟩ amplitude</span>
-                    <span className="font-mono text-sm">0.707 + 0i</span>
+                    <span className="font-mono text-sm">{formatComplex(quantumState.alpha)}</span>
                   </div>
                   <div className="w-full bg-muted rounded-full h-2">
-                    <div className="bg-primary h-2 rounded-full w-1/2"></div>
+                    <div className="bg-primary h-2 rounded-full" style={{ width: `${probabilities.prob0 * 100}%` }}></div>
                   </div>
                 </div>
                 <div className="space-y-2">
                   <div className="flex justify-between items-center">
                     <span className="text-sm">|1⟩ amplitude</span>
-                    <span className="font-mono text-sm">0.707 + 0i</span>
+                    <span className="font-mono text-sm">{formatComplex(quantumState.beta)}</span>
                   </div>
                   <div className="w-full bg-muted rounded-full h-2">
-                    <div className="bg-secondary h-2 rounded-full w-1/2"></div>
+                    <div className="bg-secondary h-2 rounded-full" style={{ width: `${probabilities.prob1 * 100}%` }}></div>
                   </div>
                 </div>
                 <div className="pt-2 border-t">
@@ -224,8 +289,11 @@ const Visualization = () => {
                     State: |ψ⟩ = α|0⟩ + β|1⟩
                   </div>
                   <div className="font-mono text-xs mt-1">
-                    Probability |0⟩: 50%<br />
-                    Probability |1⟩: 50%
+                    Probability |0⟩: {(probabilities.prob0 * 100).toFixed(1)}%<br />
+                    Probability |1⟩: {(probabilities.prob1 * 100).toFixed(1)}%
+                  </div>
+                  <div className="text-xs text-muted-foreground mt-2">
+                    Bloch: ({blochCoords.x.toFixed(2)}, {blochCoords.y.toFixed(2)}, {blochCoords.z.toFixed(2)})
                   </div>
                 </div>
               </CardContent>
@@ -237,11 +305,41 @@ const Visualization = () => {
                 <CardDescription>Apply quantum gates</CardDescription>
               </CardHeader>
               <CardContent className="space-y-2">
-                <Button variant="outline" className="w-full">Pauli-X (NOT)</Button>
-                <Button variant="outline" className="w-full">Pauli-Y</Button>
-                <Button variant="outline" className="w-full">Pauli-Z</Button>
-                <Button variant="outline" className="w-full">Hadamard</Button>
-                <Button variant="outline" className="w-full">Phase (S)</Button>
+                <Button 
+                  variant="outline" 
+                  className="w-full" 
+                  onClick={() => applyGate("Pauli-X", quantumGates.pauliX)}
+                >
+                  Pauli-X (NOT)
+                </Button>
+                <Button 
+                  variant="outline" 
+                  className="w-full" 
+                  onClick={() => applyGate("Pauli-Y", quantumGates.pauliY)}
+                >
+                  Pauli-Y
+                </Button>
+                <Button 
+                  variant="outline" 
+                  className="w-full" 
+                  onClick={() => applyGate("Pauli-Z", quantumGates.pauliZ)}
+                >
+                  Pauli-Z
+                </Button>
+                <Button 
+                  variant="outline" 
+                  className="w-full" 
+                  onClick={() => applyGate("Hadamard", quantumGates.hadamard)}
+                >
+                  Hadamard
+                </Button>
+                <Button 
+                  variant="outline" 
+                  className="w-full" 
+                  onClick={() => applyGate("Phase", quantumGates.phase)}
+                >
+                  Phase (S)
+                </Button>
               </CardContent>
             </Card>
 
@@ -250,13 +348,21 @@ const Visualization = () => {
                 <CardTitle>Measurements</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                <Button className="w-full quantum-pulse">
+                <Button className="w-full quantum-pulse" onClick={performMeasurement}>
                   Measure Qubit
                 </Button>
                 <div className="text-center">
-                  <div className="text-2xl font-bold text-primary">|0⟩</div>
+                  <div className="text-2xl font-bold text-primary">|{lastMeasurement}⟩</div>
                   <div className="text-sm text-muted-foreground">Last measurement</div>
                 </div>
+                {measurements.length > 0 && (
+                  <div className="max-h-32 overflow-y-auto">
+                    <div className="text-xs text-muted-foreground mb-1">Measurement History:</div>
+                    {measurements.slice(-3).map((measurement, i) => (
+                      <div key={i} className="text-xs font-mono">{measurement}</div>
+                    ))}
+                  </div>
+                )}
               </CardContent>
             </Card>
 

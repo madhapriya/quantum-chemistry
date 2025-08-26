@@ -6,9 +6,12 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { ArrowLeft, Download, RefreshCw, CheckCircle, Clock, Zap, BarChart3 } from "lucide-react";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, ResponsiveContainer, BarChart, Bar } from "recharts";
+import { useToast } from "@/hooks/use-toast";
+import { downloadReport } from "@/lib/quantumState";
 
 const Results = () => {
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const { toast } = useToast();
 
   // Mock simulation data
   const energyComparison = [
@@ -25,7 +28,38 @@ const Results = () => {
 
   const handleRefresh = () => {
     setIsRefreshing(true);
-    setTimeout(() => setIsRefreshing(false), 2000);
+    setTimeout(() => {
+      setIsRefreshing(false);
+      toast({
+        title: "Data Refreshed",
+        description: "Latest quantum simulation results loaded",
+      });
+    }, 2000);
+  };
+
+  const exportResults = () => {
+    const fullReport = {
+      timestamp: new Date().toISOString(),
+      summary: {
+        completedJobs: 3,
+        runningJobs: 1,
+        bestEnergy: -0.743,
+        improvement: 48.6
+      },
+      energyComparison,
+      convergenceData,
+      quantumJobs: [
+        { id: 'job-001', molecule: 'H₂', status: 'completed', backend: 'ibm_brisbane' },
+        { id: 'job-002', molecule: 'LiH', status: 'running', backend: 'ibm_kyoto' },
+        { id: 'job-003', molecule: 'H₂O', status: 'queued', backend: 'ibm_osaka' }
+      ]
+    };
+    
+    downloadReport(fullReport, `quantum-chemistry-results-${Date.now()}.json`);
+    toast({
+      title: "Results Exported",
+      description: "Complete simulation report downloaded successfully",
+    });
   };
 
   return (
@@ -56,7 +90,7 @@ const Results = () => {
                 <RefreshCw className={`h-4 w-4 mr-2 ${isRefreshing ? 'animate-spin' : ''}`} />
                 Refresh
               </Button>
-              <Button size="sm" className="quantum-glow">
+              <Button size="sm" className="quantum-glow" onClick={exportResults}>
                 <Download className="h-4 w-4 mr-2" />
                 Export Report
               </Button>
