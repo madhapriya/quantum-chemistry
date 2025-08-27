@@ -148,6 +148,12 @@ const Index = () => {
                   View Quantum States
                 </Link>
               </Button>
+              <Button variant="ghost" size="lg" asChild>
+                <Link to="/how-it-works">
+                  <Zap className="h-5 w-5 mr-2" />
+                  How It Works
+                </Link>
+              </Button>
             </div>
 
             {/* Feature highlights */}

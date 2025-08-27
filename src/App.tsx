@@ -7,6 +7,7 @@ import Index from "./pages/Index";
 import Simulation from "./pages/Simulation";
 import Visualization from "./pages/Visualization";
 import Results from "./pages/Results";
+import HowItWorks from "./pages/HowItWorks";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -23,6 +24,7 @@ const App = () => (
           <Route path="/simulation/:moleculeId" element={<Simulation />} />
           <Route path="/visualization" element={<Visualization />} />
           <Route path="/results" element={<Results />} />
+          <Route path="/how-it-works" element={<HowItWorks />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
