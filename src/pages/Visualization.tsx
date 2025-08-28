@@ -8,6 +8,7 @@ import { ArrowLeft, Play, Pause, RotateCcw, Download } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import * as THREE from "three";
 import QuantumCircuit from "@/components/QuantumCircuit";
+import EfficientQuantumCircuit from "@/components/EfficientQuantumCircuit";
 import { 
   QuantumState, 
   BlochCoordinates, 
@@ -282,6 +283,45 @@ const Visualization = () => {
                     <p><strong>3. Entanglement:</strong> CNOT gate creates quantum correlations between qubits</p>
                     <p><strong>4. Phase Gates:</strong> Rz(θ₂) and Rz(θ₃) add phase rotations for optimization</p>
                     <p><strong>5. Measurement:</strong> Collapse to classical bits for energy estimation</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Efficient 4-Qubit Circuit Diagram */}
+            <Card className="mt-8 quantum-glow">
+              <CardHeader>
+                <CardTitle>Efficient 4-Qubit VQE Ansatz</CardTitle>
+                <CardDescription>
+                  Scalable circuit design for larger molecules (H₄, BeH₂) with optimized entanglement
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <EfficientQuantumCircuit animate={isAnimating} />
+                <div className="mt-4 p-4 bg-gradient-to-r from-primary/5 to-secondary/5 rounded-lg border-l-4 border-primary">
+                  <h4 className="font-semibold mb-3 text-primary">Efficiency Improvements:</h4>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
+                    <div>
+                      <strong className="text-foreground">Linear Entanglement:</strong>
+                      <p className="text-muted-foreground">O(n) CNOT gates instead of O(n²)</p>
+                    </div>
+                    <div>
+                      <strong className="text-foreground">Skip Connections:</strong>
+                      <p className="text-muted-foreground">Long-range correlations with minimal depth</p>
+                    </div>
+                    <div>
+                      <strong className="text-foreground">Parameter Count:</strong>
+                      <p className="text-muted-foreground">Only 8 parameters for 4 qubits</p>
+                    </div>
+                    <div>
+                      <strong className="text-foreground">Gate Depth:</strong>
+                      <p className="text-muted-foreground">Reduced from O(n²) to O(n)</p>
+                    </div>
+                  </div>
+                  <div className="mt-3 pt-3 border-t border-border/50">
+                    <p className="text-xs text-muted-foreground">
+                      <strong>Molecules:</strong> H₄ (square), BeH₂ (linear), LiH₄⁻ (tetrahedral)
+                    </p>
                   </div>
                 </div>
               </CardContent>
