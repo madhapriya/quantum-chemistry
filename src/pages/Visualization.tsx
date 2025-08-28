@@ -7,6 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { ArrowLeft, Play, Pause, RotateCcw, Download } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import * as THREE from "three";
+import QuantumCircuit from "@/components/QuantumCircuit";
 import { 
   QuantumState, 
   BlochCoordinates, 
@@ -253,6 +254,35 @@ const Visualization = () => {
                       <QuantumStateVisualizer />
                     )}
                   </Canvas>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Quantum Circuit Diagram */}
+            <Card className="mt-8 quantum-glow">
+              <CardHeader>
+                <CardTitle>H₂ Molecule VQE Circuit</CardTitle>
+                <CardDescription>
+                  Quantum circuit ansatz used for H₂ ground state energy calculation
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <QuantumCircuit 
+                  theta0={0.5} 
+                  theta1={0.3} 
+                  theta2={0.7} 
+                  theta3={0.2} 
+                  animate={isAnimating}
+                />
+                <div className="mt-4 p-4 bg-muted/50 rounded-lg">
+                  <h4 className="font-semibold mb-2">Circuit Explanation:</h4>
+                  <div className="text-sm text-muted-foreground space-y-1">
+                    <p><strong>1. Hartree-Fock Init:</strong> X gate on q0 to prepare |01⟩ starting state</p>
+                    <p><strong>2. Rotation Gates:</strong> Ry(θ₀) and Ry(θ₁) create superposition states</p>
+                    <p><strong>3. Entanglement:</strong> CNOT gate creates quantum correlations between qubits</p>
+                    <p><strong>4. Phase Gates:</strong> Rz(θ₂) and Rz(θ₃) add phase rotations for optimization</p>
+                    <p><strong>5. Measurement:</strong> Collapse to classical bits for energy estimation</p>
+                  </div>
                 </div>
               </CardContent>
             </Card>
