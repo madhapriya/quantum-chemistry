@@ -3,7 +3,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, BarChart, Bar } from 'recharts';
+import mechanismsImage from "@/assets/h2-mechanisms-infographic.jpg";
 
 const MultiDiseaseDashboard = () => {
   const diseaseData = {
@@ -87,14 +88,23 @@ const MultiDiseaseDashboard = () => {
   ];
 
   return (
-    <section className="max-w-7xl mx-auto px-4 py-16">
-      <div className="text-center mb-12">
-        <h2 className="text-4xl font-bold text-foreground mb-4">
-          Multi-Disease Impact Dashboard
+    <section className="max-w-7xl mx-auto px-4 py-20">
+      <div className="text-center mb-16">
+        <h2 className="text-5xl font-bold text-foreground mb-6">
+          H₂ Healing Mechanisms
         </h2>
-        <p className="text-xl text-muted-foreground">
-          H₂ therapeutic effects across different conditions
+        <p className="text-2xl text-muted-foreground mb-8">
+          How molecular hydrogen transforms disease into recovery
         </p>
+        
+        {/* Mechanisms Infographic */}
+        <div className="mb-12">
+          <img 
+            src={mechanismsImage} 
+            alt="H2 therapy mechanisms infographic"
+            className="w-full max-w-4xl mx-auto rounded-2xl shadow-2xl quantum-glow"
+          />
+        </div>
       </div>
 
       <Tabs value={selectedDisease} onValueChange={setSelectedDisease} className="space-y-8">
@@ -119,65 +129,138 @@ const MultiDiseaseDashboard = () => {
               </Badge>
             </div>
 
-            <div className="grid lg:grid-cols-3 gap-8">
-              {/* Metrics Cards */}
-              <div className="space-y-4">
-                <h3 className="text-xl font-semibold text-center">Treatment Outcomes</h3>
+            <div className="grid lg:grid-cols-2 gap-12">
+              {/* Enhanced Metrics with Visual Cards */}
+              <div className="space-y-6">
+                <h3 className="text-3xl font-bold text-center text-foreground mb-8">Treatment Impact</h3>
                 {[
-                  { label: 'Symptom Improvement', value: disease.metrics.symptomImprovement, icon: '📈' },
-                  { label: 'Immune Recovery', value: disease.metrics.immuneRecovery, icon: '🛡️' },
-                  { label: 'ROS Reduction', value: disease.metrics.rosReduction, icon: '⚡' }
+                  { 
+                    label: 'Symptom Relief', 
+                    value: disease.metrics.symptomImprovement, 
+                    icon: '📈',
+                    color: disease.color,
+                    description: 'Patient-reported improvement'
+                  },
+                  { 
+                    label: 'Immune Restoration', 
+                    value: disease.metrics.immuneRecovery, 
+                    icon: '🛡️',
+                    color: '#10b981',
+                    description: 'T-cell and NK cell recovery'
+                  },
+                  { 
+                    label: 'Oxidative Balance', 
+                    value: disease.metrics.rosReduction, 
+                    icon: '⚡',
+                    color: '#f59e0b',
+                    description: 'ROS neutralization efficacy'
+                  }
                 ].map((metric, index) => (
-                  <Card key={index} className="p-4">
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="flex items-center gap-2">
-                        <span>{metric.icon}</span>
-                        <span className="font-medium">{metric.label}</span>
-                      </span>
-                      <span className="text-xl font-bold text-primary">{metric.value}%</span>
+                  <Card key={index} className="p-6 quantum-glow hover:scale-105 transition-all duration-300">
+                    <div className="flex items-center justify-between mb-4">
+                      <div className="flex items-center gap-4">
+                        <div className="text-4xl p-3 bg-primary/10 rounded-full">
+                          {metric.icon}
+                        </div>
+                        <div>
+                          <h4 className="text-xl font-bold text-foreground">{metric.label}</h4>
+                          <p className="text-sm text-muted-foreground">{metric.description}</p>
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <div className="text-4xl font-bold" style={{ color: metric.color }}>
+                          {metric.value}%
+                        </div>
+                        <div className="text-sm text-muted-foreground">improvement</div>
+                      </div>
                     </div>
-                    <Progress value={metric.value} className="h-2" />
+                    <Progress value={metric.value} className="h-3" />
                   </Card>
                 ))}
               </div>
 
-              {/* Timeline Chart */}
-              <Card className="col-span-2">
-                <CardHeader>
-                  <CardTitle className="text-center">Recovery Timeline (4 Weeks)</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <ResponsiveContainer width="100%" height={300}>
-                    <LineChart data={disease.timeline}>
-                      <CartesianGrid strokeDasharray="3 3" />
-                      <XAxis dataKey="week" label={{ value: 'Weeks', position: 'insideBottom', offset: -5 }} />
-                      <YAxis label={{ value: 'Improvement %', angle: -90, position: 'insideLeft' }} />
-                      <Tooltip />
-                      <Line 
-                        type="monotone" 
-                        dataKey="symptoms" 
-                        stroke={disease.color} 
-                        strokeWidth={3}
-                        name="Symptoms"
-                      />
-                      <Line 
-                        type="monotone" 
-                        dataKey="immune" 
-                        stroke="#10b981" 
-                        strokeWidth={3}
-                        name="Immune Function"
-                      />
-                      <Line 
-                        type="monotone" 
-                        dataKey="ros" 
-                        stroke="#f59e0b" 
-                        strokeWidth={3}
-                        name="ROS Levels"
-                      />
-                    </LineChart>
-                  </ResponsiveContainer>
-                </CardContent>
-              </Card>
+              {/* Enhanced Recovery Visualization */}
+              <div className="space-y-6">
+                <h3 className="text-3xl font-bold text-center text-foreground mb-8">Recovery Journey</h3>
+                
+                {/* Recovery Timeline Chart */}
+                <Card className="quantum-glow">
+                  <CardHeader>
+                    <CardTitle className="text-2xl text-center">4-Week Healing Process</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <ResponsiveContainer width="100%" height={350}>
+                      <LineChart data={disease.timeline}>
+                        <CartesianGrid strokeDasharray="3 3" className="opacity-30" />
+                        <XAxis 
+                          dataKey="week" 
+                          label={{ value: 'Treatment Weeks', position: 'insideBottom', offset: -5 }}
+                          className="text-sm"
+                        />
+                        <YAxis 
+                          label={{ value: 'Recovery Progress (%)', angle: -90, position: 'insideLeft' }}
+                          className="text-sm"
+                        />
+                        <Tooltip 
+                          contentStyle={{ 
+                            backgroundColor: 'hsl(var(--background))', 
+                            border: '1px solid hsl(var(--border))',
+                            borderRadius: '8px'
+                          }}
+                        />
+                        <Line 
+                          type="monotone" 
+                          dataKey="symptoms" 
+                          stroke={disease.color} 
+                          strokeWidth={4}
+                          name="Symptom Relief"
+                          dot={{ fill: disease.color, strokeWidth: 2, r: 6 }}
+                          activeDot={{ r: 8, stroke: disease.color, strokeWidth: 2 }}
+                        />
+                        <Line 
+                          type="monotone" 
+                          dataKey="immune" 
+                          stroke="#10b981" 
+                          strokeWidth={4}
+                          name="Immune Recovery"
+                          dot={{ fill: "#10b981", strokeWidth: 2, r: 6 }}
+                          activeDot={{ r: 8, stroke: "#10b981", strokeWidth: 2 }}
+                        />
+                        <Line 
+                          type="monotone" 
+                          dataKey="ros" 
+                          stroke="#f59e0b" 
+                          strokeWidth={4}
+                          name="Oxidative Balance"
+                          dot={{ fill: "#f59e0b", strokeWidth: 2, r: 6 }}
+                          activeDot={{ r: 8, stroke: "#f59e0b", strokeWidth: 2 }}
+                        />
+                      </LineChart>
+                    </ResponsiveContainer>
+                  </CardContent>
+                </Card>
+
+                {/* Recovery Milestones */}
+                <Card className="p-6 bg-gradient-to-r from-primary/5 to-secondary/5">
+                  <h4 className="text-xl font-bold mb-4">Key Recovery Milestones</h4>
+                  <div className="space-y-3">
+                    {[
+                      { week: "Week 1", milestone: "Initial symptom relief begins", percentage: "25%" },
+                      { week: "Week 2", milestone: "Significant immune cell recovery", percentage: "50%" },
+                      { week: "Week 3", milestone: "Major oxidative stress reduction", percentage: "75%" },
+                      { week: "Week 4", milestone: "Near-complete functional restoration", percentage: "90%" }
+                    ].map((item, index) => (
+                      <div key={index} className="flex justify-between items-center p-3 bg-card/50 rounded-lg">
+                        <div>
+                          <span className="font-semibold text-primary">{item.week}:</span>
+                          <span className="ml-2 text-muted-foreground">{item.milestone}</span>
+                        </div>
+                        <Badge variant="secondary" className="text-lg font-bold">{item.percentage}</Badge>
+                      </div>
+                    ))}
+                  </div>
+                </Card>
+              </div>
             </div>
 
             {/* Pie Chart */}

@@ -25,17 +25,11 @@ const QuantumCure = () => {
         {/* Hero Section */}
         <HeroSection />
 
-        {/* Simulation & Metrics Panel */}
-        <MetricsPanel />
-
         {/* Multi-Disease Dashboard */}
         <MultiDiseaseDashboard />
 
         {/* Clinical Evidence Carousel */}
         <ClinicalCarousel />
-
-        {/* Quantum Simulation Dashboard */}
-        <QuantumSimulationDashboard />
 
         {/* Enhanced Footer */}
         <footer className="relative py-20 bg-gradient-to-t from-primary/5 to-transparent overflow-hidden">
