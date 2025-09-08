@@ -4,6 +4,7 @@ import HeroSection from "@/components/quantumcure/HeroSection";
 import MetricsPanel from "@/components/quantumcure/MetricsPanel";
 import MultiDiseaseDashboard from "@/components/quantumcure/MultiDiseaseDashboard";
 import ClinicalCarousel from "@/components/quantumcure/ClinicalCarousel";
+import ResearchPapers from "@/components/quantumcure/ResearchPapers";
 import QuantumSimulationDashboard from "@/components/quantumcure/QuantumSimulationDashboard";
 
 const QuantumCure = () => {
@@ -30,6 +31,9 @@ const QuantumCure = () => {
 
         {/* Clinical Evidence Carousel */}
         <ClinicalCarousel />
+
+        {/* Research Papers */}
+        <ResearchPapers />
 
         {/* Enhanced Footer */}
         <footer className="relative py-20 bg-gradient-to-t from-primary/5 to-transparent overflow-hidden">
