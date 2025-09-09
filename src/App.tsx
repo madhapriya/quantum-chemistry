@@ -9,6 +9,7 @@ import Visualization from "./pages/Visualization";
 import Results from "./pages/Results";
 import HowItWorks from "./pages/HowItWorks";
 import QuantumCure from "./pages/QuantumCure";
+import QuantumCureMVP from "./pages/QuantumCureMVP";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -27,6 +28,7 @@ const App = () => (
           <Route path="/results" element={<Results />} />
           <Route path="/how-it-works" element={<HowItWorks />} />
           <Route path="/quantum-cure" element={<QuantumCure />} />
+          <Route path="/quantum-cure-mvp" element={<QuantumCureMVP />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
