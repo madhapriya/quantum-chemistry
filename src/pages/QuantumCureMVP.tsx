@@ -5,6 +5,9 @@ import { Badge } from "@/components/ui/badge";
 import { useNavigate } from "react-router-dom";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ScatterChart, Scatter, ReferenceLine } from "recharts";
 import { Atom, Brain, Database, Zap, Target, TrendingUp, Users, FlaskConical } from "lucide-react";
+import h2EnergyImage from "@/assets/h2-energy-curve.png";
+import qsvmClassificationImage from "@/assets/qsvm-classification.png";
+import futureVisionImage from "@/assets/future-vision-infographic.png";
 
 const QuantumCureMVP = () => {
   const navigate = useNavigate();
@@ -219,25 +222,24 @@ const QuantumCureMVP = () => {
                 <CardTitle>H₂ Molecule Energy Curve</CardTitle>
                 <CardDescription>Ground state energy vs bond length (Å)</CardDescription>
               </CardHeader>
-              <CardContent>
-                <ResponsiveContainer width="100%" height={300}>
-                  <LineChart data={h2Data}>
-                    <CartesianGrid strokeDasharray="3 3" className="opacity-30" />
-                    <XAxis dataKey="bondLength" />
-                    <YAxis />
-                    <Tooltip 
-                      formatter={(value) => [`${value} Ha`, "Energy"]}
-                      labelFormatter={(label) => `Bond Length: ${label} Å`}
-                    />
-                    <Line 
-                      type="monotone" 
-                      dataKey="energy" 
-                      stroke="hsl(var(--primary))" 
-                      strokeWidth={3}
-                      dot={{ fill: "hsl(var(--primary))", strokeWidth: 2, r: 4 }}
-                    />
-                  </LineChart>
-                </ResponsiveContainer>
+              <CardContent className="space-y-4">
+                <div className="bg-muted/20 p-4 rounded-lg">
+                  <img 
+                    src={h2EnergyImage} 
+                    alt="H₂ Molecule Energy Curve showing bond length vs energy relationship"
+                    className="w-full h-auto rounded-lg shadow-sm"
+                  />
+                </div>
+                <div className="grid grid-cols-2 gap-4 text-sm">
+                  <div className="p-3 bg-primary/5 rounded-lg text-center">
+                    <div className="font-semibold text-primary">Optimal Bond Length</div>
+                    <div className="text-muted-foreground">0.74 Å</div>
+                  </div>
+                  <div className="p-3 bg-secondary/5 rounded-lg text-center">
+                    <div className="font-semibold text-secondary">Ground State Energy</div>
+                    <div className="text-muted-foreground">-1.137 Ha</div>
+                  </div>
+                </div>
               </CardContent>
             </Card>
           </div>
@@ -263,6 +265,20 @@ const QuantumCureMVP = () => {
               </TabsList>
 
               <TabsContent value="comparison" className="space-y-6">
+                <Card className="p-6 mb-8">
+                  <CardHeader>
+                    <CardTitle className="text-center">QSVM Cancer Classification Demo</CardTitle>
+                    <CardDescription className="text-center">Gene Expression Data Classification Results</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <img 
+                      src={qsvmClassificationImage} 
+                      alt="QSVM Classification showing cancer vs healthy gene expression data"
+                      className="w-full h-auto rounded-lg shadow-sm mb-4"
+                    />
+                  </CardContent>
+                </Card>
+
                 <div className="grid md:grid-cols-2 gap-8">
                   <Card className="p-6">
                     <CardHeader>
@@ -369,12 +385,28 @@ const QuantumCureMVP = () => {
             </p>
           </div>
 
+          <div className="max-w-4xl mx-auto mb-12">
+            <Card className="p-8">
+              <CardHeader className="text-center">
+                <CardTitle className="text-2xl mb-4">Quantum-Enhanced Cancer Therapy Roadmap</CardTitle>
+                <CardDescription>Our vision for the future of precision oncology</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <img 
+                  src={futureVisionImage} 
+                  alt="Future vision infographic showing quantum cancer therapy roadmap"
+                  className="w-full h-auto rounded-lg shadow-sm"
+                />
+              </CardContent>
+            </Card>
+          </div>
+
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
             <Card className="p-6 text-center hover:shadow-lg transition-shadow">
               <Database className="w-12 h-12 mx-auto mb-4 text-primary" />
               <CardTitle className="text-lg mb-2">Real Datasets</CardTitle>
               <CardDescription>
-                Integrate TCGA, GEO, and clinical cancer databases
+                Integrate TCGA, GEO, and clinical cancer databases for comprehensive analysis
               </CardDescription>
             </Card>
 
@@ -382,23 +414,23 @@ const QuantumCureMVP = () => {
               <Brain className="w-12 h-12 mx-auto mb-4 text-secondary" />
               <CardTitle className="text-lg mb-2">Hybrid ML + QML</CardTitle>
               <CardDescription>
-                Advanced diagnosis & drug response prediction
+                Advanced diagnosis & drug response prediction using quantum-classical algorithms
               </CardDescription>
             </Card>
 
             <Card className="p-6 text-center hover:shadow-lg transition-shadow">
               <Atom className="w-12 h-12 mx-auto mb-4 text-primary" />
-              <CardTitle className="text-lg mb-2">H₂ Therapy</CardTitle>
+              <CardTitle className="text-lg mb-2">H₂ Therapy Integration</CardTitle>
               <CardDescription>
-                Connect molecular hydrogen evidence with quantum insights
+                Connect molecular hydrogen research with quantum insights for personalized treatment
               </CardDescription>
             </Card>
 
             <Card className="p-6 text-center hover:shadow-lg transition-shadow">
               <Users className="w-12 h-12 mx-auto mb-4 text-secondary" />
-              <CardTitle className="text-lg mb-2">Clinical Support</CardTitle>
+              <CardTitle className="text-lg mb-2">Clinical Support Systems</CardTitle>
               <CardDescription>
-                Decision-support systems for oncologists
+                AI-powered decision-support systems empowering oncologists with quantum insights
               </CardDescription>
             </Card>
           </div>
